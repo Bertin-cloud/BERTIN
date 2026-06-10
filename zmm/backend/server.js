@@ -34,7 +34,15 @@ app.get('/api/health', (req, res) => res.json({ status: 'ZMM Backend Running ✅
 // Serve frontend static files
 const path = require('path');
 const buildPath = path.join(__dirname, '../frontend/build');
+const fs = require('fs');
+
 console.log('Serving static files from:', buildPath);
+console.log('Build folder exists:', fs.existsSync(buildPath));
+console.log('Build folder is directory:', fs.existsSync(buildPath) && fs.statSync(buildPath).isDirectory());
+
+if (fs.existsSync(buildPath)) {
+  console.log('Build folder contents:', fs.readdirSync(buildPath));
+}
 
 app.use(express.static(buildPath));
 
