@@ -52,6 +52,14 @@ app.get('*', (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 
+// Log environment status for debugging
+console.log('Environment Check:');
+console.log('- PORT:', PORT);
+console.log('- LIVEKIT_URL:', process.env.LIVEKIT_URL ? '✓ Set' : '✗ Missing');
+console.log('- LIVEKIT_API_KEY:', process.env.LIVEKIT_API_KEY ? '✓ Set' : '✗ Missing');
+console.log('- LIVEKIT_API_SECRET:', process.env.LIVEKIT_API_SECRET ? '✓ Set' : '✗ Missing');
+console.log('- JWT_SECRET:', process.env.JWT_SECRET ? '✓ Set' : '✗ Missing');
+
 app.listen(PORT, () => {
   console.log(`ZMM Backend running on http://localhost:${PORT}`);
 });

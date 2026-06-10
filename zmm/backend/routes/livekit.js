@@ -6,7 +6,20 @@ const router = express.Router();
 const promotions = {};
 
 // RoomService client for admin actions (kick/mute/etc.)
-const roomService = new RoomServiceClient(process.env.LIVEKIT_URL, process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET);
+// Lazy initialization - only create when needed
+let roomService = null;
+
+function getRoomService() {
+  if (!roomService) {
+    if (!process.env.LIVEKIT_URL || !process.env.LIVEKIT_API_KEY || !process.env.LIVEKIT_API_SECRET) {
+      console.error('ERROR: LiveKit environment variables not set!');
+      console.error('Required: LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET');
+      return null;
+    }
+    roomService = new RoomServiceClient(process.env.LIVEKIT_URL, process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET);
+  }
+  return roomService;
+}
 
 // Generate LiveKit token for any participant
 router.post('/token', async (req, res) => {
@@ -85,11 +98,16 @@ router.post('/kick', async (req, res) => {
       return res.status(400).json({ error: 'roomName and participantName required' });
     }
 
+    const service = getRoomService();
+    if (!service) {
+      return res.status(500).json({ error: 'LiveKit service not configured' });
+    }
+
     // revoke=true will revoke tokens immediately by setting revokeTokenTs to current time
     const opts = {};
     if (revoke) opts.revokeTokenTs = Math.floor(Date.now() / 1000);
 
-    await roomService.removeParticipant(roomName, participantName, opts);
+    await service.removeParticipant(roomName, participantName, opts);
 
     res.json({ ok: true });
   } catch (err) {
@@ -106,7 +124,12 @@ router.post('/mute', async (req, res) => {
       return res.status(400).json({ error: 'roomName, participantName and trackSid required' });
     }
 
-    await roomService.mutePublishedTrack(roomName, participantName, trackSid, !!muted);
+    const service = getRoomService();
+    if (!service) {
+      return res.status(500).json({ error: 'LiveKit service not configured' });
+    }
+
+    await service.mutePublishedTrack(roomName, participantName, trackSid, !!muted);
     res.json({ ok: true });
   } catch (err) {
     console.error('LiveKit mute error:', err);
