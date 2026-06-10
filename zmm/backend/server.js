@@ -33,11 +33,18 @@ app.get('/api/health', (req, res) => res.json({ status: 'ZMM Backend Running ✅
 
 // Serve frontend static files
 const path = require('path');
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+const buildPath = path.join(__dirname, '../frontend/build');
+app.use(express.static(buildPath, { index: false }));
 
-// Fallback to index.html for React Router
+// Fallback to index.html for React Router (SPA routing)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  const indexPath = path.join(buildPath, 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).send('Server error - build files not found');
+    }
+  });
 });
 
 const PORT = process.env.PORT || 4000;
