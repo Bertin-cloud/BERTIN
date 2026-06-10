@@ -39,7 +39,7 @@ console.log('Serving static files from:', buildPath);
 app.use(express.static(buildPath));
 
 // Fallback to index.html for React Router (SPA routing)
-app.get('*', (req, res) => {
+app.use((req, res) => {
   const indexPath = path.join(buildPath, 'index.html');
   console.log('Serving index.html for route:', req.path);
   res.sendFile(indexPath, (err) => {
