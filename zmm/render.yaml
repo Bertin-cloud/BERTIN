@@ -15,3 +15,11 @@ services:
     envVars:
       - key: PORT
         value: 4000
+      - key: JWT_SECRET
+        value: zmm_super_secret_jwt_2025
+      - key: LIVEKIT_URL
+        value: wss://conference-hbqz5vdt.livekit.cloud
+      - key: LIVEKIT_API_KEY
+        value: APIPF4uEDAnnGcQ
+      - key: LIVEKIT_API_SECRET
+        value: LGZEqkjPlUgnUPNS5nSaBcZy6gnxQT0xbK6HaSZOhAC
