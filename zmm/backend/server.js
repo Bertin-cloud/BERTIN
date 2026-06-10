@@ -34,11 +34,14 @@ app.get('/api/health', (req, res) => res.json({ status: 'ZMM Backend Running ✅
 // Serve frontend static files
 const path = require('path');
 const buildPath = path.join(__dirname, '../frontend/build');
-app.use(express.static(buildPath, { index: false }));
+console.log('Serving static files from:', buildPath);
+
+app.use(express.static(buildPath));
 
 // Fallback to index.html for React Router (SPA routing)
 app.get('*', (req, res) => {
   const indexPath = path.join(buildPath, 'index.html');
+  console.log('Serving index.html for route:', req.path);
   res.sendFile(indexPath, (err) => {
     if (err) {
       console.error('Error serving index.html:', err);
@@ -48,4 +51,7 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`ZMM Backend running on http://localhost:${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`ZMM Backend running on http://localhost:${PORT}`);
+});
