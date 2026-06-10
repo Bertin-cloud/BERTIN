@@ -49,11 +49,23 @@ app.use(express.static(buildPath));
 // Fallback to index.html for React Router (SPA routing)
 app.use((req, res) => {
   const indexPath = path.join(buildPath, 'index.html');
+  
+  if (!fs.existsSync(indexPath)) {
+    console.error(`ERROR: index.html not found at ${indexPath}`);
+    console.error('Build folder contents:', fs.existsSync(buildPath) ? fs.readdirSync(buildPath) : 'BUILD FOLDER MISSING');
+    return res.status(500).send(`
+      <h1>Build Error</h1>
+      <p>Frontend build files not found!</p>
+      <p>Expected path: ${indexPath}</p>
+      <p>Build folder exists: ${fs.existsSync(buildPath)}</p>
+    `);
+  }
+  
   console.log('Serving index.html for route:', req.path);
   res.sendFile(indexPath, (err) => {
     if (err) {
       console.error('Error serving index.html:', err);
-      res.status(500).send('Server error - build files not found');
+      res.status(500).send('Server error - could not serve index.html');
     }
   });
 });

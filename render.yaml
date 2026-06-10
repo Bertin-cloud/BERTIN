@@ -3,7 +3,7 @@ services:
     name: zmm-backend
     env: node
     rootDir: zmm
-    buildCommand: cd backend && npm install && cd ../frontend && npm install && npm run build
+    buildCommand: cd backend && npm install && cd ../frontend && npm install && npm run build && ls -la && pwd
     startCommand: cd backend && node server.js
     envVars:
       - key: PORT
